@@ -1,0 +1,29 @@
+{
+    "cooldown" : {
+        "title" : "Cooldown active",
+        "description" : "You have to wait before you can search again."
+    },
+
+    "distance" : {
+        "title" : "Too far away",
+        "description" : "You must move closer to the bin."
+    },
+
+    "notifyNoLoot" : {
+        "title" : "Bin empty",
+        "description" : "You found nothing..."
+    },
+
+    "notifyFullInventory" : {
+        "title" : "Inventory full",
+        "description" : "You cannot carry anything else."
+    },
+
+    "notifySkillCheck" : {
+        "title" : "Search failed",
+        "description" : "You failed to search the bin..."
+    },
+
+    "progressBar" : "Searching Bin..."
+}
+

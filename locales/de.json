@@ -1,0 +1,28 @@
+{
+    "cooldown": {
+        "title": "Cooldown aktiv",
+        "description": "Sie müssen warten, bevor Sie erneut suchen können."
+    },
+
+    "distance": {
+        "title": "Zu weit entfernt",
+        "description": "Sie müssen sich näher an die Tonne bewegen."
+    },
+
+    "notifyNoLoot": {
+        "title": "Tonne leer",
+        "description": "Sie haben nichts gefunden..."
+    },
+
+    "notifyFullInventory": {
+        "title": "Inventar voll",
+        "description": "Sie können nichts weiteres tragen."
+    },
+
+    "notifySkillCheck": {
+        "title": "Suche fehlgeschlagen",
+        "description": "Sie haben es nicht geschafft, die Tonne zu durchsuchen..."
+    },
+
+    "progressBar": "Tonne wird durchsucht..."
+}

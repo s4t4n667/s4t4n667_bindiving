@@ -1,0 +1,28 @@
+{
+    "cooldown": {
+        "title": "Cooldown actif",
+        "description": "Vous devez attendre avant de pouvoir chercher à nouveau."
+    },
+
+    "distance": {
+        "title": "Trop loin",
+        "description": "Vous devez vous rapprocher de la poubelle."
+    },
+
+    "notifyNoLoot": {
+        "title": "Poubelle vide",
+        "description": "Vous n'avez rien trouvé..."
+    },
+
+    "notifyFullInventory": {
+        "title": "Inventaire plein",
+        "description": "Vous ne pouvez rien porter d'autre."
+    },
+
+    "notifySkillCheck": {
+        "title": "Échec de la recherche",
+        "description": "Vous avez échoué à fouiller la poubelle..."
+    },
+
+    "progressBar": "Recherche dans la poubelle..."
+}
