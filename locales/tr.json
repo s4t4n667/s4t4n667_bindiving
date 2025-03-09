@@ -1,0 +1,28 @@
+{
+    "cooldown": {
+        "title": "Bekleme süresi aktif",
+        "description": "Tekrar arama yapmadan önce beklemelisin."
+    },
+
+    "distance": {
+        "title": "Çok uzaktasın",
+        "description": "Çöpe daha yakın olmalısın."
+    },
+
+    "notifyNoLoot": {
+        "title": "Çöp boş",
+        "description": "Hiçbir şey bulamadın..."
+    },
+
+    "notifyFullInventory": {
+        "title": "Envanter dolu",
+        "description": "Daha fazla eşya taşıyamazsın."
+    },
+
+    "notifySkillCheck": {
+        "title": "Arama başarısız",
+        "description": "Çöpü aramayı başaramadın..."
+    },
+
+    "progressBar": "Çöp aranıyor..."
+}
