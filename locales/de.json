@@ -1,28 +1,38 @@
 {
-    "cooldown": {
-        "title": "Cooldown aktiv",
-        "description": "Sie müssen warten, bevor Sie erneut suchen können."
+    "cooldown" : {
+        "title" : "Abklingzeit aktiv",
+        "description" : "Du musst warten, bevor du erneut suchen kannst",
+        "titleBin" : "Mülleimer durchsucht",
+        "descriptionBin" : "Du hast diesen Mülleimer kürzlich bereits durchsucht"
     },
 
-    "distance": {
-        "title": "Zu weit entfernt",
-        "description": "Sie müssen sich näher an die Tonne bewegen."
+    "distance" : {
+        "title" : "Zu weit entfernt",
+        "description" : "Du musst näher an den Mülleimer herangehen"
     },
 
-    "notifyNoLoot": {
-        "title": "Tonne leer",
-        "description": "Sie haben nichts gefunden..."
+    "notifyNoLoot" : {
+        "title" : "Mülleimer leer",
+        "description" : "Du hast nichts gefunden..."
     },
 
-    "notifyFullInventory": {
-        "title": "Inventar voll",
-        "description": "Sie können nichts weiteres tragen."
+    "notifyFullInventory" : {
+        "title" : "Inventar voll",
+        "description" : "Du kannst nichts weiter tragen"
     },
 
-    "notifySkillCheck": {
-        "title": "Suche fehlgeschlagen",
-        "description": "Sie haben es nicht geschafft, die Tonne zu durchsuchen..."
+    "notifySkillCheck" : {
+        "title" : "Suche fehlgeschlagen",
+        "description" : "Du konntest den Mülleimer nicht durchsuchen..."
     },
 
-    "progressBar": "Tonne wird durchsucht..."
+    "shop" : {
+        "title" : "Beutehändler",
+        "target" : "Gegenstände verkaufen",
+        "notify_title" : "Beutehändler",
+        "notify_sell_success" : "Gegenstand erfolgreich verkauft",
+        "notify_no_item" : "Du hast davon nichts!"
+    },
+
+    "progressBar" : "Mülleimer wird durchsucht..."
 }

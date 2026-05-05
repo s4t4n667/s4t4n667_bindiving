@@ -1,12 +1,14 @@
 {
     "cooldown" : {
         "title" : "Cooldown active",
-        "description" : "You have to wait before you can search again."
+        "description" : "You have to wait before you can search again",
+        "titleBin" : "Bin searched",
+        "descriptionBin" : "You have already searched this bin recently"
     },
 
     "distance" : {
         "title" : "Too far away",
-        "description" : "You must move closer to the bin."
+        "description" : "You must move closer to the bin"
     },
 
     "notifyNoLoot" : {
@@ -16,7 +18,7 @@
 
     "notifyFullInventory" : {
         "title" : "Inventory full",
-        "description" : "You cannot carry anything else."
+        "description" : "You cannot carry anything else"
     },
 
     "notifySkillCheck" : {
@@ -24,6 +26,13 @@
         "description" : "You failed to search the bin..."
     },
 
-    "progressBar" : "Searching Bin..."
-}
+    "shop" : {
+        "title" : "Loot Buyer",
+        "target" : "Sell Items",
+        "notify_title" : "Loot Buyer",
+        "notify_sell_success" : "Item successfully sold", 
+        "notify_no_item" : "You don't have any of those!"
+    },
 
+    "progressBar" : "Searching bin..."
+}

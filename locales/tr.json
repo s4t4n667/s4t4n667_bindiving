@@ -1,28 +1,38 @@
 {
-    "cooldown": {
-        "title": "Bekleme süresi aktif",
-        "description": "Tekrar arama yapmadan önce beklemelisin."
+    "cooldown" : {
+        "title" : "Bekleme süresi aktif",
+        "description" : "Tekrar arama yapmadan önce beklemeniz gerekiyor",
+        "titleBin" : "Çöp kutusu arandı",
+        "descriptionBin" : "Bu çöp kutusunu kısa süre önce zaten aradınız"
     },
 
-    "distance": {
-        "title": "Çok uzaktasın",
-        "description": "Çöpe daha yakın olmalısın."
+    "distance" : {
+        "title" : "Çok uzaktasınız",
+        "description" : "Çöp kutusuna yaklaşmalısınız"
     },
 
-    "notifyNoLoot": {
-        "title": "Çöp boş",
-        "description": "Hiçbir şey bulamadın..."
+    "notifyNoLoot" : {
+        "title" : "Çöp kutusu boş",
+        "description" : "Hiçbir şey bulamadınız..."
     },
 
-    "notifyFullInventory": {
-        "title": "Envanter dolu",
-        "description": "Daha fazla eşya taşıyamazsın."
+    "notifyFullInventory" : {
+        "title" : "Envanter dolu",
+        "description" : "Daha fazla eşya taşıyamazsınız"
     },
 
-    "notifySkillCheck": {
-        "title": "Arama başarısız",
-        "description": "Çöpü aramayı başaramadın..."
+    "notifySkillCheck" : {
+        "title" : "Arama başarısız",
+        "description" : "Çöp kutusunu aramayı başaramadınız..."
     },
 
-    "progressBar": "Çöp aranıyor..."
+    "shop" : {
+        "title" : "Ganimet Satıcısı",
+        "target" : "Eşyaları Sat",
+        "notify_title" : "Ganimet Satıcısı",
+        "notify_sell_success" : "Eşya başarıyla satıldı",
+        "notify_no_item" : "Bundan hiç yok!"
+    },
+
+    "progressBar" : "Çöp kutusu aranıyor..."
 }
