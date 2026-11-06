@@ -80,7 +80,7 @@ injury = {
 ```
 
 ## 📌 Asgaard Developments
-I’m a solo FiveM developer creating custom clothing, logos and graphics, liveries, MLO retextures and Discord servers. Lots of different packages available, along with plenty of free assets and scripts for the community to enjoy. 
+I’m a solo FiveM developer creating scripts, custom clothing, logos and graphics, liveries, MLO retextures and Discord servers. Lots of different packages available, along with plenty of free assets and scripts for the community to enjoy. 
 
 Join the Discord: [here](https://discord.gg/eFsB5ZFxeq)
 
