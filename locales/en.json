@@ -3,7 +3,9 @@
         "title" : "Cooldown active",
         "description" : "You have to wait before you can search again",
         "titleBin" : "Bin searched",
-        "descriptionBin" : "You have already searched this bin recently"
+        "descriptionBin" : "You have already searched this bin recently",
+        "titleEmptied" : "Bin emptied",
+        "descriptionEmptied" : "This bin was cleared out recently"
     },
 
     "distance" : {
@@ -21,6 +23,16 @@
         "description" : "You cannot carry anything else"
     },
 
+    "rareFind" : {
+        "title" : "%s find!",
+        "description" : "You found %s"
+    },
+
+    "injury" : {
+        "title" : "Ouch",
+        "description" : "You cut yourself on a shard of glass"
+    },
+
     "notifySkillCheck" : {
         "title" : "Search failed",
         "description" : "You failed to search the bin..."
@@ -30,8 +42,11 @@
         "title" : "Loot Buyer",
         "target" : "Sell Items",
         "notify_title" : "Loot Buyer",
-        "notify_sell_success" : "Item successfully sold", 
-        "notify_no_item" : "You don't have any of those!"
+        "notify_sell_success" : "Item successfully sold",
+        "notify_no_item" : "You don't have any of those!",
+        "rarity" : "Rarity: %s",
+        "amount" : "Amount to sell",
+        "money" : "$%s"
     },
 
     "progressBar" : "Searching bin..."

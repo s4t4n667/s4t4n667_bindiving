@@ -3,7 +3,9 @@
         "title" : "Bekleme süresi aktif",
         "description" : "Tekrar arama yapmadan önce beklemeniz gerekiyor",
         "titleBin" : "Çöp kutusu arandı",
-        "descriptionBin" : "Bu çöp kutusunu kısa süre önce zaten aradınız"
+        "descriptionBin" : "Bu çöp kutusunu kısa süre önce zaten aradınız",
+        "titleEmptied" : "Çöp kutusu boşaltılmış",
+        "descriptionEmptied" : "Bu çöp kutusu yakın zamanda boşaltıldı"
     },
 
     "distance" : {
@@ -21,6 +23,16 @@
         "description" : "Daha fazla eşya taşıyamazsınız"
     },
 
+    "rareFind" : {
+        "title" : "%s buluntu!",
+        "description" : "%s buldun"
+    },
+
+    "injury" : {
+        "title" : "Ah",
+        "description" : "Bir cam kırığıyla elini kestin"
+    },
+
     "notifySkillCheck" : {
         "title" : "Arama başarısız",
         "description" : "Çöp kutusunu aramayı başaramadınız..."
@@ -31,7 +43,10 @@
         "target" : "Eşyaları Sat",
         "notify_title" : "Ganimet Satıcısı",
         "notify_sell_success" : "Eşya başarıyla satıldı",
-        "notify_no_item" : "Bundan hiç yok!"
+        "notify_no_item" : "Bundan hiç yok!",
+        "rarity" : "Nadirlik: %s",
+        "amount" : "Satılacak miktar",
+        "money" : "$%s"
     },
 
     "progressBar" : "Çöp kutusu aranıyor..."

@@ -1,29 +1,18 @@
 lib.locale()
 local config = require('config')
 
+local searchCooldown = config.setup.cooldowns.search * 1000
+local binCooldown = config.setup.cooldowns.sameBin * 1000
+local searchDuration = config.setup.search.duration * 1000
+
 local lastSearch = 0
-local closestBin, binPos
-local binID = 0
 local binCooldowns = {}
 
-CreateThread(function()
-    if config.shop.blip then
-        local shopBlip = AddBlipForCoord(config.shop.coords.x, config.shop.coords.y, config.shop.coords.z)
-        SetBlipSprite(shopBlip, config.shop.blipSprite)
-        SetBlipColour(shopBlip, config.shop.blipColor)
-        SetBlipScale(shopBlip, config.shop.blipScale)
-        SetBlipAsShortRange(shopBlip, true)
-        BeginTextCommandSetBlipName('STRING')
-        AddTextComponentString(config.shop.blipLabel)
-        EndTextCommandSetBlipName(shopBlip)
-    end 
-end)
-
 local function getBinKey(coords)
-    return ("%0.2f_%0.2f_%0.2f"):format(coords.x, coords.y, coords.z)
+    return ('%0.2f_%0.2f_%0.2f'):format(coords.x, coords.y, coords.z)
 end
 
-local function IsPlayerFacingEntity(ped, entity, threshold)
+local function isPlayerFacingEntity(ped, entity, threshold)
     local pCoords = GetEntityCoords(ped)
     local eCoords = GetEntityCoords(entity)
 
@@ -33,163 +22,203 @@ local function IsPlayerFacingEntity(ped, entity, threshold)
     local dist = math.sqrt(dx * dx + dy * dy)
     if dist == 0 then return false end
 
-    local invDist = 1 / dist
-    dx, dy = dx * invDist, dy * invDist
+    dx, dy = dx / dist, dy / dist
 
     local forward = GetEntityForwardVector(ped)
-    threshold = threshold or 0.65
 
-    return (forward.x * dx + forward.y * dy) > threshold
+    return (forward.x * dx + forward.y * dy) > (threshold or 0.65)
 end
 
-local function getClosestBin(pCoords)
-    for _, model in ipairs(config.binModels) do
-        local bin = GetClosestObjectOfType(
-            pCoords.x, pCoords.y, pCoords.z,
-            config.setup.maxDistance,
-            model,
-            false, false, false
-        )
-
-        if DoesEntityExist(bin) then
-            return bin
-        end
-    end
-
-    return nil
+local function notify(id, titleKey, descriptionKey, icon, iconColor)
+    lib.notify({
+        id = id,
+        title = locale(titleKey),
+        description = locale(descriptionKey),
+        position = config.notifications.position,
+        icon = icon,
+        iconColor = iconColor
+    })
 end
 
 local function isOnGlobalCooldown(currentTime)
-    if currentTime - lastSearch < config.setup.cooldown then
-        lib.notify({
-            id = 'binCooldown',
-            title = locale('cooldown.title'),
-            description = locale('cooldown.description'),
-            position = config.notifications.position,
-            icon = 'fa-solid fa-hourglass-half',
-            iconColor = config.notifications.cooldownColor
-        })
+    if currentTime - lastSearch < searchCooldown then
+        notify('binCooldown', 'cooldown.title', 'cooldown.description', 'fa-solid fa-hourglass-half', config.notifications.cooldownColor)
         return true
     end
     return false
 end
 
 local function isBinOnCooldown(binKey, currentTime)
-    if binCooldowns[binKey] and (currentTime - binCooldowns[binKey]) < config.setup.binCooldown then
-        lib.notify({
-            id = 'binCooldown',
-            title = locale('cooldown.titleBin'),
-            description = locale('cooldown.descriptionBin'),
-            position = config.notifications.position,
-            icon = 'fa-solid fa-trash',
-            iconColor = config.notifications.failColor
-        })
+    local lastBinSearch = binCooldowns[binKey]
+    if lastBinSearch and (currentTime - lastBinSearch) < binCooldown then
+        notify('binCooldown', 'cooldown.titleBin', 'cooldown.descriptionBin', 'fa-solid fa-trash', config.notifications.failColor)
         return true
     end
     return false
 end
 
 local function performSkillCheck()
-    if config.setup.useSkillCheck then
-        if not lib.skillCheck(config.setup.difficulty, config.setup.keys) then
-            ClearPedTasks(ped)
-            lib.notify({
-                id = 'binFail',
-                title = locale('notifySkillCheck.title'),
-                description = locale('notifySkillCheck.description'),
-                position = 'top-right',
-                icon = 'times-circle',
-                iconColor = config.notifications.failColor
-            })
-            return false
-        end
+    local skillCheck = config.setup.skillCheck
+    if not skillCheck.enabled then return true end
+
+    if not lib.skillCheck(skillCheck.difficulty, skillCheck.keys) then
+        ClearPedTasks(cache.ped)
+        notify('binFail', 'notifySkillCheck.title', 'notifySkillCheck.description', 'times-circle', config.notifications.failColor)
+        return false
     end
     return true
 end
 
-function binDive()
-    local ped = PlayerPedId()
-    if IsPedInAnyVehicle(ped, true) then return false end
+RegisterNetEvent('s4t4n667_bindiving:injure', function(damage)
+    if GetInvokingResource() then return end
+
+    ApplyDamageToPed(cache.ped, damage, false)
+    notify('binHurt', 'injury.title', 'injury.description', 'fa-solid fa-droplet', config.notifications.failColor)
+
+    local cameraShake = config.setup.injury.cameraShake
+    if cameraShake and cameraShake.enabled then
+        ShakeGameplayCam(cameraShake.name, cameraShake.intensity)
+    end
+
+    local screenEffect = config.setup.injury.screenEffect
+    if screenEffect and screenEffect.enabled then
+        AnimpostfxPlay(screenEffect.name, 0, true)
+        Wait(screenEffect.duration * 1000)
+        AnimpostfxStop(screenEffect.name)
+    end
+end)
+
+local function notifyBinEmptied()
+    notify('binCooldown', 'cooldown.titleEmptied', 'cooldown.descriptionEmptied', 'fa-solid fa-trash', config.notifications.failColor)
+end
+
+local function binDive(bin)
+    if cache.vehicle or not DoesEntityExist(bin) then return false end
 
     local currentTime = GetGameTimer()
-
     if isOnGlobalCooldown(currentTime) then return false end
 
-    local pCoords = GetEntityCoords(ped)
-    local closestBin = getClosestBin(pCoords)
-    if not closestBin then return false end
-
-    local binCoords = GetEntityCoords(closestBin)
+    local binCoords = GetEntityCoords(bin)
     local binKey = getBinKey(binCoords)
-
     if isBinOnCooldown(binKey, currentTime) then return false end
+
+    if lib.callback.await('s4t4n667_bindiving:isBinEmptied', false, binCoords) then
+        notifyBinEmptied()
+        return false
+    end
 
     if not performSkillCheck() then return false end
 
-    lastSearch = currentTime
-    binCooldowns[binKey] = currentTime
-
     if not lib.progressBar({
-        duration = config.setup.searchTime,
+        duration = searchDuration,
         label = locale('progressBar'),
-        canCancel = config.setup.searchCancel,
+        canCancel = config.setup.search.canCancel,
         position = 'bottom',
-        anim = {
-            dict = 'amb@prop_human_bum_bin@base',
-            clip = 'base'
-        },
+        anim = config.setup.search.anim,
         disable = {
             car = true,
             move = true
         },
     }) then return false end
 
-    local success = lib.callback.await('s4t4n667_bindiving:binSearch', false, binCoords)
+    lastSearch = GetGameTimer()
+    binCooldowns[binKey] = lastSearch
+
+    local success, reason = lib.callback.await('s4t4n667_bindiving:binSearch', false, binCoords)
+
+    if reason == 'emptied' then
+        notifyBinEmptied()
+    end
 
     return success or false
 end
 
-CreateThread(function()
-    local pedModel = config.shop.ped
-    local coords = config.shop.coords
+local function getItemLabel(loot)
+    if loot.label then return loot.label end
 
-    RequestModel(pedModel)
-    while not HasModelLoaded(pedModel) do Wait(0) end
+    local item = exports.ox_inventory:Items(loot.item)
+    return item and item.label or loot.item
+end
 
-    local ped = CreatePed(4, pedModel, coords.x, coords.y, coords.z -1, coords.w, false, true)
+local defaultImagePath = 'nui://ox_inventory/web/images'
+local itemImages = {}
 
-    if not DoesEntityExist(ped) then
+local function getItemImage(itemName)
+    if itemImages[itemName] ~= nil then return itemImages[itemName] end
+
+    local item = exports.ox_inventory:Items(itemName)
+    local image = item and item.client and item.client.image
+
+    if not image then
+        local imagePath = GetConvar('inventory:imagepath', defaultImagePath)
+
+        if imagePath ~= defaultImagePath then
+            image = ('%s/%s.png'):format(imagePath, itemName)
+        elseif LoadResourceFile('ox_inventory', ('web/images/%s.png'):format(itemName)) then
+            image = ('%s/%s.png'):format(imagePath, itemName)
+        end
+    end
+
+    itemImages[itemName] = image or false
+    return itemImages[itemName]
+end
+
+local function sellItem(loot)
+    local count = exports.ox_inventory:Search('count', loot.item) or 0
+
+    if count < 1 then
+        notify('bindivingShop', 'shop.notify_title', 'shop.notify_no_item', 'times-circle', config.notifications.failColor)
         return
     end
 
-    SetEntityAsMissionEntity(ped, true, true)
-    FreezeEntityPosition(ped, true)
-    SetEntityInvincible(ped, true)
-    SetBlockingOfNonTemporaryEvents(ped, true)
+    if count == 1 then
+        TriggerServerEvent('s4t4n667_bindiving:sellItem', loot.item, 1)
+        return
+    end
 
-    exports.ox_target:addLocalEntity(ped, {
+    local input = lib.inputDialog(getItemLabel(loot), {
         {
-            name = 'bindiving-shop',
-            icon = 'fa-solid fa-basket-shopping',
-            label = locale('shop.target'),
-            onSelect = function()
-                OpenSellMenu()
-            end
-        }
+            type = 'slider',
+            label = locale('shop.amount'),
+            min = 1,
+            max = count,
+            default = count,
+            step = 1,
+        },
     })
-end)
 
-function OpenSellMenu()
+    local amount = input and tonumber(input[1])
+    if not amount then return end
+
+    TriggerServerEvent('s4t4n667_bindiving:sellItem', loot.item, amount)
+end
+
+local function formatPrice(price)
+    local payoutItem = config.shop.payoutItem or 'money'
+    if payoutItem == 'money' then
+        return locale('shop.money', price)
+    end
+
+    return ('%s %s'):format(price, getItemLabel({ item = payoutItem }))
+end
+
+local function openSellMenu()
     local options = {}
 
-    for _, v in pairs(config.binLoot) do
-        if v.sell and v.sell > 0 then
+    for _, loot in ipairs(config.setup.loot.items) do
+        if loot.sell and loot.sell > 0 then
+            local rarityName = loot.rarity or 'common'
+            local rarity = config.setup.loot.rarities[rarityName] or {}
+            local count = exports.ox_inventory:Search('count', loot.item) or 0
+
             options[#options + 1] = {
-                title = (v.label or v.item) .. " - $" .. v.sell,
-                icon = v.icon or "fa-solid fa-dollar-sign",
-                iconColor = v.iconColor,
+                title = ('%s - %s'):format(getItemLabel(loot), formatPrice(loot.sell)),
+                description = locale('shop.rarity', rarity.label or rarityName),
+                icon = loot.icon or getItemImage(loot.item) or 'fa-solid fa-dollar-sign',
+                iconColor = loot.iconColor,
+                disabled = count < 1,
                 onSelect = function()
-                    TriggerServerEvent("s4t4n667_bindiving:sellItem", v.item, 1)
+                    sellItem(loot)
                 end
             }
         end
@@ -204,40 +233,117 @@ function OpenSellMenu()
     lib.showContext('bindiving_shop_sell')
 end
 
-local function addTarget()
-    binID = binID + 1
+local function createShopBlip()
+    local settings = config.shop.blip
+    local coords = config.shop.ped.coords
+    local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
 
-    for _, model in ipairs(config.binModels) do
-        local options = {
-            {
-                name = ('fibrePicking_%d'):format(binID),
-                label = config.target.label,
-                icon = config.target.icon,
-                iconColor = config.target.iconColor,
-                distance = config.target.distance,
-                canInteract = function(entity, distance)
-                    if distance > config.target.distance then
-                        return false
-                    end
-                    return IsPlayerFacingEntity(PlayerPedId(), entity, 0.65)
-                end,
-                onSelect = function()
-                    binDive()
-                end,
-            },
-        }
-        exports.ox_target:addModel(model, options)
-    end
+    SetBlipSprite(blip, settings.sprite)
+    SetBlipColour(blip, settings.color)
+    SetBlipScale(blip, settings.scale)
+    SetBlipAsShortRange(blip, true)
+    BeginTextCommandSetBlipName('STRING')
+    AddTextComponentString(settings.label)
+    EndTextCommandSetBlipName(blip)
 end
 
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-    addTarget()
-end)
+local shopPed
+local shopNearby = false
 
-RegisterNetEvent('esx:playerLoaded', function()
-    addTarget()
-end)
+local function deleteShopPed()
+    if shopPed and DoesEntityExist(shopPed) then
+        exports.ox_target:removeLocalEntity(shopPed, 'bindiving-shop')
+        DeleteEntity(shopPed)
+    end
+    shopPed = nil
+end
+
+local function createShopPed()
+    if shopPed then return end
+
+    local coords = config.shop.ped.coords
+    local model = lib.requestModel(config.shop.ped.model)
+    if not model then return end
+
+    if not shopNearby then
+        SetModelAsNoLongerNeeded(model)
+        return
+    end
+
+    local ped = CreatePed(4, model, coords.x, coords.y, coords.z - 1, coords.w, false, true)
+    SetModelAsNoLongerNeeded(model)
+
+    if not DoesEntityExist(ped) then return end
+
+    SetEntityAsMissionEntity(ped, true, true)
+    FreezeEntityPosition(ped, true)
+    SetEntityInvincible(ped, true)
+    SetBlockingOfNonTemporaryEvents(ped, true)
+
+    if config.shop.ped.scenario then
+        TaskStartScenarioInPlace(ped, config.shop.ped.scenario, 0, true)
+    end
+
+    exports.ox_target:addLocalEntity(ped, {
+        {
+            name = 'bindiving-shop',
+            icon = config.shop.target.icon,
+            iconColor = config.shop.target.iconColor,
+            distance = config.shop.target.distance,
+            label = locale('shop.target'),
+            onSelect = openSellMenu
+        }
+    })
+
+    shopPed = ped
+end
+
+local function setupShopPoint()
+    lib.points.new({
+        coords = config.shop.ped.coords.xyz,
+        distance = config.shop.ped.spawnDistance or 50.0,
+        onEnter = function()
+            shopNearby = true
+            createShopPed()
+        end,
+        onExit = function()
+            shopNearby = false
+            deleteShopPed()
+        end,
+    })
+end
+
+local function addBinTargets()
+    exports.ox_target:addModel(config.binModels, {
+        {
+            name = 'bindiving-search',
+            label = config.target.label,
+            icon = config.target.icon,
+            iconColor = config.target.iconColor,
+            distance = config.target.distance,
+            canInteract = function(entity)
+                return isPlayerFacingEntity(cache.ped, entity, config.target.facingThreshold)
+            end,
+            onSelect = function(data)
+                binDive(data.entity)
+            end,
+        },
+    })
+end
+
+if config.shop.blip and config.shop.blip.enabled then
+    createShopBlip()
+end
 
 AddEventHandler('onResourceStart', function(resource)
-    addTarget()
+    if resource == cache.resource then
+        setupShopPoint()
+        addBinTargets()
+    end
+end)
+
+AddEventHandler('onResourceStop', function(resource)
+    if resource == cache.resource then
+        deleteShopPed()
+    end
 end)

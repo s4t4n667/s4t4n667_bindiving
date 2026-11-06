@@ -3,7 +3,9 @@
         "title" : "Abklingzeit aktiv",
         "description" : "Du musst warten, bevor du erneut suchen kannst",
         "titleBin" : "Mülleimer durchsucht",
-        "descriptionBin" : "Du hast diesen Mülleimer kürzlich bereits durchsucht"
+        "descriptionBin" : "Du hast diesen Mülleimer kürzlich bereits durchsucht",
+        "titleEmptied" : "Mülleimer geleert",
+        "descriptionEmptied" : "Dieser Mülleimer wurde vor Kurzem ausgeräumt"
     },
 
     "distance" : {
@@ -21,6 +23,16 @@
         "description" : "Du kannst nichts weiter tragen"
     },
 
+    "rareFind" : {
+        "title" : "%s-Fund!",
+        "description" : "Du hast %s gefunden"
+    },
+
+    "injury" : {
+        "title" : "Autsch",
+        "description" : "Du hast dich an einer Glasscherbe geschnitten"
+    },
+
     "notifySkillCheck" : {
         "title" : "Suche fehlgeschlagen",
         "description" : "Du konntest den Mülleimer nicht durchsuchen..."
@@ -31,7 +43,10 @@
         "target" : "Gegenstände verkaufen",
         "notify_title" : "Beutehändler",
         "notify_sell_success" : "Gegenstand erfolgreich verkauft",
-        "notify_no_item" : "Du hast davon nichts!"
+        "notify_no_item" : "Du hast davon nichts!",
+        "rarity" : "Seltenheit: %s",
+        "amount" : "Verkaufsmenge",
+        "money" : "%s $"
     },
 
     "progressBar" : "Mülleimer wird durchsucht..."

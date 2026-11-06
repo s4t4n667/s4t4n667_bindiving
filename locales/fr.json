@@ -3,7 +3,9 @@
         "title" : "Cooldown actif",
         "description" : "Vous devez attendre avant de pouvoir chercher à nouveau",
         "titleBin" : "Poubelle déjà fouillée",
-        "descriptionBin" : "Vous avez déjà fouillé cette poubelle récemment"
+        "descriptionBin" : "Vous avez déjà fouillé cette poubelle récemment",
+        "titleEmptied" : "Poubelle vidée",
+        "descriptionEmptied" : "Cette poubelle a été vidée récemment"
     },
 
     "distance" : {
@@ -21,6 +23,16 @@
         "description" : "Vous ne pouvez rien porter de plus"
     },
 
+    "rareFind" : {
+        "title" : "Trouvaille %s !",
+        "description" : "Vous avez trouvé %s"
+    },
+
+    "injury" : {
+        "title" : "Aïe",
+        "description" : "Vous vous êtes coupé sur un éclat de verre"
+    },
+
     "notifySkillCheck" : {
         "title" : "Recherche échouée",
         "description" : "Vous n'avez pas réussi à fouiller la poubelle..."
@@ -30,8 +42,11 @@
         "title" : "Acheteur de butin",
         "target" : "Vendre des objets",
         "notify_title" : "Acheteur de butin",
-        "notify_sell_success" : "Objet vendu avec succès", 
-        "notify_no_item" : "Vous n'en avez pas !"
+        "notify_sell_success" : "Objet vendu avec succès",
+        "notify_no_item" : "Vous n'en avez pas !",
+        "rarity" : "Rareté : %s",
+        "amount" : "Quantité à vendre",
+        "money" : "%s $"
     },
 
     "progressBar" : "Fouille de la poubelle..."
